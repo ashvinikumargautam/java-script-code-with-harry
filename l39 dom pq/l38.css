@@ -1,0 +1,14 @@
+nav{
+    display: flex;
+    align-items: center;
+    margin: 50px;
+    background-color: rgb(134, 115, 161);
+}
+li{
+    margin: 20;
+    align-items: center;
+}
+table{
+    display: flex;
+    
+}
