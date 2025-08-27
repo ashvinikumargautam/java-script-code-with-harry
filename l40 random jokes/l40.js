@@ -101,8 +101,9 @@ const jokes = [
   "Why did the chicken become a scientist? It cracked the egg code.",
   "Why did the llama become a poet? It had deep wooly thoughts."
 ];
-let num=Math.floor(Math.random()*100)
-console.log(num)
-let rand=document.getElementsByTagName("h1")
-let jok = jokes[num]
-document.write(`${num} : ${jok}`)
+
+  let num=Math.floor(Math.random()*100)
+  // console.log(num)
+  // let rand=document.getElementsByTagName("h1")
+  let jok = jokes[num]
+  document.getElementById("joke").innerHTML=(`\n ${num} : ${jok}`)
