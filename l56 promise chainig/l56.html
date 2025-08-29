@@ -1,0 +1,35 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        let p1 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        console.log("1111111");
+        resolve();  // settle the promise
+    }, 2000);
+}).then(() => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log("2222222");
+            resolve();
+        }, 2000);
+    });
+}).then(() => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log("3333333");
+            resolve();
+        }, 2000);
+    });
+});
+
+         
+    </script>
+</body>
+</html>

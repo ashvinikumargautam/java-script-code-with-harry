@@ -1,0 +1,27 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     
+<script>
+    console.log("hello one ")
+    let promise = new Promise(function(resolve,reject){
+        alert("i am an alert in side promise")
+        resolve(56)
+    })
+    setTimeout(function(){
+        console.log("hello in 2 sec")
+    },2000)
+    console.log("my name is "+"hello 3")
+    console.log(promise)
+    //fetch google.com homepage ==> conosle.log("google.com homepage done")
+    //fetch data from the data api
+    //fetch pictures from the server
+    //print downloading
+    //rest of the script
+</script> 
+</body>
+</html>

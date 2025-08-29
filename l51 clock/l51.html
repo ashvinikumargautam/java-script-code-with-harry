@@ -1,0 +1,32 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>excersise 4</title>
+</head>
+<body>
+
+<!-- //create log using java script set interval method -->
+ <div>
+    <h1 id="btn">TIME</h1>
+    <h2 style="color: blue;">ashvini's clock : <h2 id="time"></h2></h2>
+
+ </div>
+<script>
+    // console.log("h: "+h,"m : "+m,"s : "+s,"d : "+d)
+    let t =document.getElementById("time")
+    let btn = document.getElementById("btn")
+    setInterval(function(){
+    let a=new Date()
+    let h=a.getHours()
+    let m=a.getMinutes()
+    let s=a.getSeconds()
+    let d=a.getDate()
+    let month = a.getMonth()
+    let year = a.getFullYear()
+    t.innerHTML=`date : ${d}/${month}/${year} |time = ${h}:${m}:${s} `
+},10);
+
+</script>
+</body>
+</html>
