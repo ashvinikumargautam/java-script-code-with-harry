@@ -1,0 +1,29 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+         try{
+            let age  = prompt("please enter your age : ")
+            age = Number.parseInt(age)
+            if(age>120){
+                throw new ReferenceError("this age is probably not true ")
+            }
+            console.log("age is : "+age)
+            // hey;
+            // throw new ReferenceError("harrry is not good")
+         }catch(err){
+            document.writeln("error name : "+err.name )
+            document.writeln( " error message : "+err.message)
+            document.writeln(" error stack : "+err.stack)
+
+            console.log("error name : "+err.name)
+            console.log(" error message : "+err.message)
+            console.log(" error stack : "+err.stack)
+         }
+    </script>
+</body>
+</html>

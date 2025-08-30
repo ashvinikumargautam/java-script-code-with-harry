@@ -1,0 +1,40 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        async function ashvini() {
+            let delhiWheather = new Promise((resolve,reject)=>{
+                setTimeout(()=>{
+                    resolve("27 deg")
+                },3000)
+            })
+            let bangloreWeather = new Promise((resolve,reject)=>{
+                setTimeout(()=>{
+                    resolve("21 deg")
+                },2000)
+            })
+            // delhiWheather.then(alert)
+            // bangloreWeather.then(alert)
+            console.log("fetching delhi weather.......")
+            let delhiW = await delhiWheather
+            console.log("delhi weather fetched : "+delhiW)
+
+            console.log("fetching banglore weather.......")
+            let bangW = await bangloreWeather
+            console.log("banglore weather fetched : "+bangW)
+            
+            return [delhiW,bangW]
+        }
+        
+        console.log("welcome to weathwr control room")
+    let A =ashvini()
+    A.then((value) =>{
+        console.log(value) 
+        })
+    </script>
+</body>
+</html>

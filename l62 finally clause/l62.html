@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        const f = ()=>{
+
+        try{
+            console.log("ashvini yaha error nhi hai ")
+                // hey;
+            return
+            
+        }catch(err){
+            console.log("error name : "+err.name)
+            console.log(" error message : "+err.message)
+            console.log(" error stack : "+err.stack)
+            console.log(hahaha) //catch ke andr bhi error aa gya tab fb finally run ho gya
+        }finally{
+            console.log(" finallly execute successfully!!!!!") //always runs
+            //close the ifle
+            //exit the loop
+            //write to the log file
+        }
+    }
+    f();
+        console.log("i am a good boy")
+    </script>
+</body>
+</html>

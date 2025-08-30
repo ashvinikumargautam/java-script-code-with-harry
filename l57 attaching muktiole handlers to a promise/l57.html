@@ -1,0 +1,28 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let p1 = new Promise((resolve,reject)=>{
+          setTimeout(()=>{
+            // alert("hey i am resolved")
+            resolve(1)
+          },3000)  
+        })
+        p1.then(()=>{
+            console.log("cong! this promise is now resolved")
+            console.log("handler 1")
+
+        })
+        p1.then(()=>{
+            console.log ("handler 2")
+        })
+        p1.then(()=>{
+            console.log("handler 3")
+        })
+    </script>
+</body>
+</html>
