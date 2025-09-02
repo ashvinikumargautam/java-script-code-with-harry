@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <h1 style="text-align: center; background-color: blanchedalmond;">weather forcast</h1>
+    </div>
+    <div>
+        <h3 id="id1" style="background-color: cadetblue;">
+            here we can see the weather
+        </h3>
+    </div>
+   
+   
+   <script>
+    let p = fetch("https://api.open-meteo.com/v1/forecast?latitude=28.61&longitude=77.23&current_weather=true");
+        p.then((response)=>{
+            if(!response.ok){
+                throw new Error("HTTP error! status "+response.status)
+            }
+            return response.text();
+        }).then((data)=>{
+            // console.log(data)
+            // for(item in data){
+            //     console.log(data[item])
+            // }
+           let a = document.getElementById("id1")
+           a.innerHTML=data
+            // document.writeln(data)
+        }).catch((err)=>{
+            console.log("error fetching : ",err)
+        })
+
+        //notes remaining qus of prac set
+
+        // let a = prompt("enter your note : ")
+        // localStorage.setItem("note",a)
+        // let n = localStorage.getItem("note")
+        // if(a){
+        // alert("your note is : "+n)
+        // let c =confirm("dp you want to delete your note")
+        // if(c){
+        //     localStorage.removeItem("note")
+        //     alert("note delted succefully")
+        // }
+    // }
+</script>
+</body>
+</html>

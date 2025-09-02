@@ -5,7 +5,318 @@
     <title>Document</title>
 </head>
 <body>
-    <script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weather JSON Viewer</title>
+  <style>
+    :root{
+      --bg: #0f172a; /* slate-900 */
+      --panel: #111827ee; /* gray-900 */
+      --muted: #94a3b8; /* slate-400 */
+      --text: #e5e7eb; /* gray-200 */
+      --accent: #22d3ee; /* cyan-400 */
+      --ok: #34d399; /* green-400 */
+      --bad: #f87171; /* red-400 */
+      --warn: #fbbf24; /* amber-400 */
+      --card: #0b1220; /* dark panel */
+      --border: #1f2937; /* gray-800 */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background: radial-gradient(1200px 600px at 80% -10%, #164e63 0%, transparent 40%),
+                  radial-gradient(1200px 600px at -10% 110%, #4f46e5 0%, transparent 40%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100dvh;
+    }
+    header{padding:28px 16px 12px; text-align:center}
+    h1{margin:0; font-size: clamp(20px, 2.6vw, 36px); letter-spacing:0.3px}
+    .sub{color:var(--muted); margin-top:6px; font-size:14px}
+
+    .container{max-width:1100px; margin:16px auto 40px; padding:0 16px}
+
+    .panel{background: var(--panel); border:1px solid var(--border); border-radius:16px; padding:16px}
+    .row{display:grid; grid-template-columns: 1fr; gap:16px}
+    @media (min-width: 900px){ .row{ grid-template-columns: 1.3fr 1fr } }
+
+    textarea{
+      width:100%; min-height:220px; resize:vertical; padding:12px; border-radius:12px; border:1px solid var(--border); background:#0b1020; color:var(--text);
+      font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; line-height:1.45; font-size:13px;
+    }
+    .actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+    button{
+      border:none; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; transition:transform .05s ease, box-shadow .2s ease; 
+      background:#0ea5e9; color:#001018; box-shadow: 0 6px 18px #0ea5e966;
+    }
+    button.secondary{ background:#334155; color:#e5e7eb; box-shadow:none }
+    button:active{ transform: translateY(1px) }
+
+    .grid{ display:grid; gap:14px }
+    @media (min-width:700px){ .grid{ grid-template-columns: repeat(3,1fr) } }
+
+    .card{ background: var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 16px }
+    .card h3{ margin:0 0 10px; font-size:15px; color:#c7d2fe }
+    .kv{ display:grid; grid-template-columns: 1fr auto; gap:8px 12px; align-items:center }
+    .label{ color:var(--muted); font-size:12px }
+    .value{ font-weight:600; font-size:14px }
+
+    .big{ font-size:42px; font-weight:800; line-height:1; letter-spacing: -0.5px }
+    .unit{ font-size:14px; color:var(--muted); margin-left:6px }
+    .meter{ height:8px; background:#0e1726; border:1px solid var(--border); border-radius:999px; overflow:hidden }
+    .meter>i{ display:block; height:100%; width:0 }
+
+    .ok{ background: var(--ok) }
+    .warn{ background: var(--warn) }
+    .bad{ background: var(--bad) }
+
+    details{ background:#0b1020; border:1px dashed #243145; border-radius:12px; padding:10px 12px }
+    details>summary{ cursor:pointer; font-weight:600 }
+    pre{ margin:8px 0 0; white-space:pre-wrap; word-break:break-word }
+
+    .note{ color:var(--muted); font-size:12px }
+    .tag{ display:inline-block; padding:4px 8px; border-radius:999px; background:#0f2138; border:1px solid var(--border); font-size:12px; color:#cbd5e1 }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Weather JSON Viewer</h1>
+    <div class="sub">Paste a weather payload (like Open‑Meteo) and see neatly separated details.</div>
+  </header>
+
+  <div class="container">
+    <div class="row">
+      <section class="panel">
+        <div class="actions" style="justify-content:space-between; margin-bottom:10px">
+          <div class="note">Tip: This demo is preloaded. Edit and click <strong>Render</strong>.</div>
+          <div class="actions">
+            <button id="renderBtn">Render</button>
+            <button id="clearBtn" class="secondary">Clear</button>
+            <button id="loadDemo" class="secondary">Load demo</button>
+          </div>
+        </div>
+        <textarea id="jsonInput" spellcheck="false"></textarea>
+      </section>
+
+      <aside class="panel">
+        <div class="card">
+          <h3>Status</h3>
+          <div id="status" class="value">Waiting for input…</div>
+        </div>
+        <div class="card">
+          <h3>Detected Provider</h3>
+          <div id="provider" class="value tag">Unknown</div>
+        </div>
+        <div class="card">
+          <h3>Your Local Time</h3>
+          <div class="value" id="localNow"></div>
+          <div class="note">From your browser</div>
+        </div>
+      </aside>
+    </div>
+
+    <section id="output" class="grid" style="margin-top:16px"></section>
+
+    <section class="panel" style="margin-top:16px">
+      <details>
+        <summary>Raw JSON</summary>
+        <pre id="raw"></pre>
+      </details>
+    </section>
+  </div>
+
+  <script>
+    // --- Helpers ---
+    const byId = (id)=>document.getElementById(id);
+
+    function degToCompass(deg){
+      const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW","N"];
+      return dirs[Math.round(((deg%360)+360)%360/22.5)];
+    }
+
+    // WMO weather code mapping (subset + groups)
+    const WMO = {
+      0:{t:"Clear sky", emoji:"☀️"},
+      1:{t:"Mainly clear", emoji:"🌤️"}, 2:{t:"Partly cloudy", emoji:"⛅"}, 3:{t:"Overcast", emoji:"☁️"},
+      45:{t:"Fog", emoji:"🌫️"}, 48:{t:"Depositing rime fog", emoji:"🌫️"},
+      51:{t:"Drizzle (light)", emoji:"🌧️"}, 53:{t:"Drizzle (moderate)", emoji:"🌧️"}, 55:{t:"Drizzle (dense)", emoji:"🌧️"},
+      61:{t:"Rain (slight)", emoji:"🌦️"}, 63:{t:"Rain (moderate)", emoji:"🌧️"}, 65:{t:"Rain (heavy)", emoji:"🌧️"},
+      66:{t:"Freezing rain (light)", emoji:"🌧️"}, 67:{t:"Freezing rain (heavy)", emoji:"🌧️"},
+      71:{t:"Snow fall (slight)", emoji:"🌨️"}, 73:{t:"Snow fall (moderate)", emoji:"🌨️"}, 75:{t:"Snow fall (heavy)", emoji:"❄️"},
+      77:{t:"Snow grains", emoji:"🌨️"}, 80:{t:"Rain showers (slight)", emoji:"🌦️"}, 81:{t:"Rain showers (moderate)", emoji:"🌧️"}, 82:{t:"Rain showers (violent)", emoji:"⛈️"},
+      85:{t:"Snow showers (slight)", emoji:"🌨️"}, 86:{t:"Snow showers (heavy)", emoji:"❄️"},
+      95:{t:"Thunderstorm", emoji:"⛈️"}, 96:{t:"Thunderstorm w/ hail (slight)", emoji:"⛈️"}, 99:{t:"Thunderstorm w/ hail (heavy)", emoji:"⛈️"}
+    };
+
+    function codeToText(code){
+      const c = WMO[code];
+      return c ? `${c.emoji} ${c.t}` : `Code ${code}`;
+    }
+
+    function fmtTimeISO(iso, tzLabel){
+      try{
+        const d = new Date(iso);
+        const local = d.toLocaleString(undefined, { dateStyle:'medium', timeStyle:'short' });
+        return tzLabel ? `${local} (${tzLabel})` : local;
+      }catch{ return iso }
+    }
+
+    function meterFillClass(v){
+      if (v == null || isNaN(v)) return "";
+      if (v < 10) return "bad";
+      if (v < 25) return "warn";
+      return "ok";
+    }
+
+    // --- Rendering ---
+    function render(obj){
+      const out = byId('output');
+      out.innerHTML = '';
+
+      // Provider detection (very simple heuristics)
+      const provider = obj && obj.current_weather_units ? 'Open-Meteo-like' : 'Unknown';
+      byId('provider').textContent = provider;
+
+      // Status
+      byId('status').innerHTML = `<span class="tag">Parsed ✓</span>`;
+
+      // 1) Location & Meta
+      const meta = [
+        ['Latitude', obj.latitude],
+        ['Longitude', obj.longitude],
+        ['Elevation', obj.elevation],
+        ['Timezone', obj.timezone],
+        ['TZ Abbrev', obj.timezone_abbreviation],
+        ['UTC Offset (s)', obj.utc_offset_seconds]
+      ];
+
+      // 2) Current Weather
+      const cw = obj.current_weather || {};
+      const units = obj.current_weather_units || {};
+
+      // Temperature card
+      const tempHTML = `
+        <div class="card">
+          <h3>Temperature</h3>
+          <div class="big">${cw.temperature ?? '—'}<span class="unit">${units.temperature || '°C'}</span></div>
+          <div class="note">As of ${cw.time ? fmtTimeISO(cw.time) : '—'}</div>
+        </div>`;
+
+      // Wind card
+      const windDir = (cw.winddirection!=null) ? `${cw.winddirection}° (${degToCompass(cw.winddirection)})` : '—';
+      const windHTML = `
+        <div class="card">
+          <h3>Wind</h3>
+          <div class="kv">
+            <div class="label">Speed</div><div class="value">${cw.windspeed ?? '—'} ${units.windspeed || 'km/h'}</div>
+            <div class="label">Direction</div><div class="value">${windDir}</div>
+          </div>
+          <div class="meter" style="margin-top:10px"><i class="${meterFillClass(cw.windspeed)}" style="width:${Math.min(100, (cw.windspeed||0)/60*100)}%"></i></div>
+        </div>`;
+
+      // Sky card
+      const isDay = cw.is_day==null ? '—' : (cw.is_day? 'Day' : 'Night');
+      const codeText = cw.weathercode!=null ? codeToText(cw.weathercode) : '—';
+      const skyHTML = `
+        <div class="card">
+          <h3>Sky</h3>
+          <div class="kv">
+            <div class="label">Condition</div><div class="value">${codeText}</div>
+            <div class="label">Interval</div><div class="value">${cw.interval ?? '—'} ${units.interval || 's'}</div>
+            <div class="label">Light</div><div class="value">${isDay}</div>
+          </div>
+        </div>`;
+
+      // Meta card
+      const metaHTML = `
+        <div class="card" style="grid-column: span 3;">
+          <h3>Location & Meta</h3>
+          <div class="kv">
+            ${meta.map(([k,v])=>`<div class="label">${k}</div><div class="value">${v ?? '—'}</div>`).join('')}
+          </div>
+        </div>`;
+
+      out.insertAdjacentHTML('beforeend', tempHTML + windHTML + skyHTML + metaHTML);
+
+      // Raw JSON
+      byId('raw').textContent = JSON.stringify(obj, null, 2);
+    }
+
+    function setLocalClock(){
+      byId('localNow').textContent = new Date().toLocaleString(undefined, { dateStyle:'medium', timeStyle:'medium' });
+    }
+
+    // --- Wire up ---
+    const demo = {
+      "latitude":28.625,
+      "longitude":77.25,
+      "generationtime_ms":0.05412101745605469,
+      "utc_offset_seconds":0,
+      "timezone":"GMT",
+      "timezone_abbreviation":"GMT",
+      "elevation":214.0,
+      "current_weather_units":{
+        "time":"iso8601",
+        "interval":"seconds",
+        "temperature":"°C",
+        "windspeed":"km/h",
+        "winddirection":"°",
+        "is_day":"",
+        "weathercode":"wmo code"
+      },
+      "current_weather":{
+        "time":"2025-09-01T18:15",
+        "interval":900,
+        "temperature":25.1,
+        "windspeed":7.4,
+        "winddirection":129,
+        "is_day":0,
+        "weathercode":95
+      }
+    };
+
+    byId('jsonInput').value = JSON.stringify(demo, null, 2);
+
+    byId('renderBtn').addEventListener('click', ()=>{
+      try{
+        const obj = JSON.parse(byId('jsonInput').value.trim());
+        render(obj);
+      }catch(err){
+        byId('status').innerHTML = `<span class="tag" style="background:#3f1d2b; border-color:#7f2334; color:#fecaca">Parse error</span>`;
+        byId('output').innerHTML = '';
+        byId('raw').textContent = err.message;
+      }
+    });
+
+    byId('clearBtn').addEventListener('click', ()=>{
+      byId('jsonInput').value = '';
+      byId('output').innerHTML = '';
+      byId('raw').textContent = '';
+      byId('status').textContent = 'Waiting for input…';
+      byId('provider').textContent = 'Unknown';
+    });
+
+    byId('loadDemo').addEventListener('click', ()=>{
+      byId('jsonInput').value = JSON.stringify(demo, null, 2);
+      byId('renderBtn').click();
+    });
+
+    // Initial render
+    byId('renderBtn').click();
+    setLocalClock();
+    setInterval(setLocalClock, 1000);
+  </script>
+</body>
+</html>
+
+
+
+
+
+    <!-- <script>
         let p1 = new Promise((resolve,reject)=>{
             setTimeout(()=>{
                 console.log("1111111")
@@ -17,6 +328,6 @@
 
             setTimeout(()=>{console.log("3333333")},2000)
         })
-        </script>
+        </script> -->
 </body>
 </html>

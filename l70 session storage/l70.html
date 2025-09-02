@@ -1,0 +1,29 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let key = prompt("enter key you want to set")
+        let value = prompt("enter value you want to set")
+     sessionStorage.setItem(key,value)
+        // sessionStorage.clear()1
+    
+        console.log(`the value at ${key} is ${sessionStorage.getItem(key)}`)
+        if(key =="red" || key =="blue" ){
+         sessionStorage.removeItem(key)
+        }else if(key == '0'){
+         sessionStorage.clear()
+        }
+        console.log (sessionStorage.key(3))
+        console.log (sessionStorage.length)
+        window.onstorage =(e)=>{
+           alert("changed")
+            console.log(e)
+        }
+        window.onstorage()
+    </script>
+</body>
+</html>
