@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     
+    <script>
+        class railwayForm{
+            
+            constructor(givenName,trainNo,address){
+                console.log("CONSTRUCTOR CALLER..."+givenName+trainNo)
+                this.name = givenName
+                this.trainNo=trainNo
+                this.address=address
+            }
+
+            preview(){
+                alert(this.name + ": form submitted for train no "+this.trainNo +" and your address is "+this.address)
+            }
+            submit(){
+                console.log(this.name + ": form submitted for train no "+this.trainNo+" and your address is "+this.address)
+            }
+            cancel(){
+                this.trainNo = 0
+                console.log(this.name + ": this form is canceled for train No. "+this.trainNo+" and your address is "+this.address)
+            }
+            }
+        
+        // create a form for harry
+        let ashviniForm =new railwayForm("ASHVINI",123243)
+        ashviniForm.submit()
+
+
+        // create a form for rohan
+        let rohanForm =new railwayForm("ROHAN",127205)
+        rohanForm.submit()
+
+
+        // create a form for mukesh
+        let mukeshForm =new railwayForm("MUKESH",123420)
+        mukeshForm.cancel()
+
+        let abhiForm = new railwayForm("abhi",13488,"1420 ,bkt,lucnknow,223432")
+            abhiForm.preview()
+            abhiForm.submit()
+            abhiForm.cancel()
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save Input to Local Storage</title>
+</head>
+<body>
+  <h2>Save Input to Local Storage</h2>
+  
+  <input type="text" id="myInput" placeholder="Enter something..." />
+  <button onclick="saveData()">Save</button>
+  <button onclick="loadData()">Load</button>
+
+  <p id="output"></p>
+
+  <script>
+    function saveData() {
+      let inputValue = document.getElementById("myInput").value;
+      localStorage.setItem("savedText", inputValue);
+      alert("Saved to localStorage!");
+    }
+
+    function loadData() {
+      let storedValue = localStorage.getItem("savedText");
+      for (let i=0;i<localStorage.length;i++){
+      if (storedValue) {
+        p= document.getElementById("output").innerText = "Saved value: " + storedValue;
+      } else {
+        document.getElementById("output").innerText = "No data found!";
+        break
+      }
+    }
+    }
+  </script>
+</body>
+</html>

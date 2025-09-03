@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOPs with JS</title>
+</head>
+<body>
+    <h1>oops with java</h1>
+
+    <script>
+         let a ={
+            name:"harry",
+            language:"javaScript",
+            run:()=>{
+                 alert("self run")
+                }
+         }
+         console.log(a)
+         //prototype
+         let p = {
+             run:()=>{
+                 alert("run")
+                }
+            }
+            p.__proto__={
+                name : "jackie"
+            }
+            
+
+
+            a.__proto__ = p
+            a.run()
+            console.log(a.name)
+    </script>
+</body>
+</html>
