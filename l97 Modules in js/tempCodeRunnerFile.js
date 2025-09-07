@@ -1,0 +1,8 @@
+import {shout,greet} from require("./module1")
+// // console.log(hello())
+// // const Ahello = require("./module1")
+// hello()
+// Ahello("vikash")
+// Ahello("ashish ")
+// Ahello("vishal")
+// Ahello("Aishwarya")
